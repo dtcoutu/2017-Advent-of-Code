@@ -29,6 +29,31 @@ class SpreadSheet {
 		
 		max - min
 	}
+	
+	public Integer getNewChecksum() {
+		def checksum = 0
+		rawInput.eachLine { line ->
+			checksum += evenlyDivisibleResult(line)
+		}
+		
+		checksum
+	}
+	
+	def evenlyDivisibleResult(String line) {
+		def numbers = line.split("\\t").collect { it as Integer }
+		
+		for (def n: numbers) {
+			for (def d: numbers) {
+				if (n == d) continue
+				if (n % d == 0) {
+					return (int)(n / d)
+				}
+				if (d % n == 0) {
+					return (int)(d / n)
+				}
+			}
+		}
+	}
 }
 
 def test = new SpreadSheet("""5	1	9	5
@@ -38,6 +63,14 @@ def test = new SpreadSheet("""5	1	9	5
 def testResult = test.getChecksum()
 
 assert testResult == 18
+
+def test2 = new SpreadSheet("""5	9	2	8
+9	4	7	3
+3	8	6	5""")
+
+def testResult2 = test2.getNewChecksum()
+
+assert testResult2 == 9
 
 def actual = new SpreadSheet("""414	382	1515	319	83	1327	116	391	101	749	1388	1046	1427	105	1341	1590
 960	930	192	147	932	621	1139	198	865	820	597	165	232	417	19	183
@@ -59,3 +92,4 @@ def actual = new SpreadSheet("""414	382	1515	319	83	1327	116	391	101	749	1388	10
 def actualResult = actual.getChecksum()
 
 println "result = " + actualResult
+println "result2 = " + actual.getNewChecksum()
