@@ -3,20 +3,17 @@ def input = "8182759779311661784248926537799313421565672689468495979489444698638
 char[] charInput = input.toCharArray()
 
 def index1 = 0
-def index2 = 1
+def index2 = (int)(charInput.length / 2)
 def sum = 0
 
-while (index2 < charInput.length) {
+while (index1 < charInput.length) {
     if (charInput[index1] == charInput[index2]) {
         sum += Integer.parseInt(Character.toString(charInput[index1]), 10)
     }
     
     index1++
-    index2++
-}
-
-if (charInput[index1] == charInput[0]) {
-    sum += Integer.parseInt(Character.toString(charInput[index1]), 10)
+		index2++
+		if (index2 == charInput.length) index2 = 0
 }
 
 println sum
