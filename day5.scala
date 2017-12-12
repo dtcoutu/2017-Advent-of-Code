@@ -1036,7 +1036,8 @@ val input: String = """0
 
 case class Instruction(value: Int) {
 	def step = {
-		new Instruction(value + 1)
+		if (value >= 3) new Instruction(value - 1)
+		else new Instruction(value + 1)
 	}
 }
 
@@ -1049,7 +1050,8 @@ object JumpList {
 	
 	def commandsToExit(instructionInput: String): Int = {
 		val instructions = instructionInput.split("\\n").map(i => new Instruction(i.toInt)).toList
-		return process(instructions, 0, 0)
+		val commandCount = process(instructions, 0, 0)
+		return commandCount
 	}
 }
 
@@ -1059,6 +1061,6 @@ val testInput = """0
 1
 -3"""
 
-assert(JumpList.commandsToExit(testInput) == 5)
+assert(JumpList.commandsToExit(testInput) == 10)
 
 println(JumpList.commandsToExit(input))
