@@ -516,9 +516,22 @@ kebx eild nrskdr meja jxczomh gcne"""
 def validPassphrase(String passphrase) {
 	List phrases = Arrays.asList(passphrase.split("\\s"))
 	
-	Set nonDuplicatePhrases = phrases as Set
+	List sortedPhrases = sortEachPhrase(phrases)
+	
+	Set nonDuplicatePhrases = sortedPhrases as Set
 	
 	phrases.size() == nonDuplicatePhrases.size()
+}
+
+def sortEachPhrase(List phrases) {
+	def sortedPhrases = []
+	phrases.each { p ->
+		def c = p.toCharArray()
+		Arrays.sort(c)
+		sortedPhrases << new String(c)
+	}
+	
+	return sortedPhrases
 }
 
 def countValidPassphrases(String allPassphrases) {
