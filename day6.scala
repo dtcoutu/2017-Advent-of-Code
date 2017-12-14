@@ -24,13 +24,13 @@ case class Memory(banks: List[Bank]) {
 }
 
 object Debugger {
-	def stepsBeforeDuplicateState(memory: Memory): Int = {
+	def stepsBeforeDuplicateState(memory: Memory): (Int, Int) = {
 		return debug(List(memory), 0)
 	}
 	
-	def debug(memoryStates: List[Memory], steps: Int): Int = {
+	def debug(memoryStates: List[Memory], steps: Int): (Int, Int) = {
 		val nextMemoryState = memoryStates.head.redistribute
-		if (memoryStates.exists(_.equals(nextMemoryState))) return steps+1
+		if (memoryStates.exists(_.equals(nextMemoryState))) return (steps+1, memoryStates.indexOf(nextMemoryState)+1)
 		else debug(nextMemoryState :: memoryStates, steps+1)
 	}
 }
@@ -41,7 +41,7 @@ def stringToMemoryBanks(input: String): Memory = {
 
 val test = stringToMemoryBanks("0	2	7	0")
 
-assert (Debugger.stepsBeforeDuplicateState(test) == 5)
+assert (Debugger.stepsBeforeDuplicateState(test) == (5, 4))
 
 val actual = stringToMemoryBanks("10	3	15	10	5	15	5	15	9	2	5	8	5	2	3	6")
 
