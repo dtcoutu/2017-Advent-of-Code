@@ -1,6 +1,6 @@
 object Day8 {
 	def readInput: Seq[String] = {
-		scala.io.Source.fromFile("input/day8.txt").mkString.split("\n")
+		scala.io.Source.fromFile("src/main/resources/day8.txt").mkString.split("\n")
 	}
 	
 	object AvailableRegisters {
@@ -99,16 +99,16 @@ object Day8 {
 	def largestValueEver: Int = {
 		AvailableRegisters.largestValueEver
 	}
+
+	// register operation modifier if register comparator value
+
+	def testInput = """b inc 5 if a > 1
+	a inc 1 if b < 5
+	c dec -10 if a >= 1
+	c inc -20 if c == 10"""
+
+	assert (Day8.largestRegisterValue(testInput.split("\n")) == 1)
+
+	println(Day8.largestRegisterValue(Day8.readInput))
+	println("largest value ever = " + Day8.largestValueEver)
 }
-
-// register operation modifier if register comparator value
-
-def testInput = """b inc 5 if a > 1
-a inc 1 if b < 5
-c dec -10 if a >= 1
-c inc -20 if c == 10"""
-
-assert (Day8.largestRegisterValue(testInput.split("\n")) == 1)
-
-println(Day8.largestRegisterValue(Day8.readInput))
-println("largest value ever = " + Day8.largestValueEver)

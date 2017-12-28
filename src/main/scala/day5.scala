@@ -1,5 +1,7 @@
 import scala.annotation.tailrec
 
+class Day5 {
+
 val input: String = """0
 0
 2
@@ -1034,33 +1036,34 @@ val input: String = """0
 -403
 -27"""
 
-case class Instruction(value: Int) {
-	def step = {
-		if (value >= 3) new Instruction(value - 1)
-		else new Instruction(value + 1)
+	case class Instruction(value: Int) {
+		def step = {
+			if (value >= 3) new Instruction(value - 1)
+			else new Instruction(value + 1)
+		}
 	}
-}
 
-object JumpList {
-	@tailrec
-	def process(list: List[Instruction], index: Int, commandsRun: Int): Int = {
-		if (index < 0 || index >= list.length) return commandsRun
-		return process(list.updated(index, list(index).step), index+list(index).value, commandsRun + 1)
-	}
+	object JumpList {
+		@tailrec
+		def process(list: List[Instruction], index: Int, commandsRun: Int): Int = {
+			if (index < 0 || index >= list.length) return commandsRun
+			return process(list.updated(index, list(index).step), index+list(index).value, commandsRun + 1)
+		}
 	
-	def commandsToExit(instructionInput: String): Int = {
-		val instructions = instructionInput.split("\\n").map(i => new Instruction(i.toInt)).toList
-		val commandCount = process(instructions, 0, 0)
-		return commandCount
+		def commandsToExit(instructionInput: String): Int = {
+			val instructions = instructionInput.split("\\n").map(i => new Instruction(i.toInt)).toList
+			val commandCount = process(instructions, 0, 0)
+			return commandCount
+		}
 	}
+
+	val testInput = """0
+	3
+	0
+	1
+	-3"""
+
+	assert(JumpList.commandsToExit(testInput) == 10)
+
+	println(JumpList.commandsToExit(input))
 }
-
-val testInput = """0
-3
-0
-1
--3"""
-
-assert(JumpList.commandsToExit(testInput) == 10)
-
-println(JumpList.commandsToExit(input))
