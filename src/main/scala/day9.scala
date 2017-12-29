@@ -25,6 +25,23 @@ object Day9 {
 		loop(groups, 1)
 	}
 	
+	def garbageCountInput(data: String): Int = {
+		val groups = input(data)
+		
+		def loop(groups: List[StreamProcessor], total: Int): Int = {
+			groups match {
+				case List() => total
+				case head :: tail => head match {
+					case Garbage(characters) => loop(tail, total + characters)
+					case Group(children) => loop(tail, loop(children, total))
+					case _ => loop(tail, total)
+				}
+			}
+		}
+		
+		loop(groups, 0)
+	}
+	
 	def process(input: List[Char]): List[StreamProcessor] = {
 		def loop(input: List[Char], roots: List[StreamProcessor] = List()): List[StreamProcessor] = {
 			input match {
@@ -75,17 +92,17 @@ object Day9 {
 			}
 		}
 	}
-	case class Garbage() extends StreamProcessor {
-		def process(input: List[Char]): (List[Char], StreamProcessor) = {
+	case class Garbage(characters: Int = 0) extends StreamProcessor {
+		def process(input: List[Char], characters: Int = 0): (List[Char], StreamProcessor) = {
 			input match {
 				case List() => (List(), this)
 				case head :: tail => head match {
-					case '>' => (tail, this)
+					case '>' => (tail, Garbage(characters))
 					case '!' => {
 						val (remainingInput, processedIgnore) = Ignore().process(tail)
-						process(remainingInput)
+						process(remainingInput, characters)
 					}
-					case _ => process(tail)
+					case _ => process(tail, characters+1)
 				}
 			}
 		}
@@ -102,5 +119,6 @@ object Day9 {
 	
 	def main(args: Array[String]): Unit = {
 		println("score = " + scoreInput(readInput))
+		println("garbage count = " + garbageCountInput(readInput))
 	}
 }
