@@ -7,6 +7,8 @@ object Day11 {
 		def update(direction: Direction) = Location(x+direction.xMod, y+direction.yMod, z+direction.zMod)
 		
 		val distanceFromOrigin = (Math.abs(x) + Math.abs(y) + Math.abs(z)) / 2
+		
+		def furtherThan(otherLocation: Location) = (distanceFromOrigin > otherLocation.distanceFromOrigin)
 	}
 	
 	sealed trait Direction {
@@ -50,26 +52,27 @@ object Day11 {
 		val zMod = 0
 	}
 	
-	def walk(steps: List[Direction]): Location = {
-		def loop(remainingSteps: List[Direction], location: Location): Location = remainingSteps match {
-			case List() => location
-			case head :: tail => loop(tail, location.update(head))
+	def walk(steps: List[Direction]): (Location, Location) = {
+		def loop(remainingSteps: List[Direction], location: Location, furthestLocation: Location): (Location, Location) = {
+			def updateFurthest = if (location.furtherThan(furthestLocation)) location else furthestLocation
+			
+			remainingSteps match {
+				case List() => (location, furthestLocation)
+				case head :: tail => loop(tail, location.update(head), updateFurthest)
+			}
 		}
 		
-		loop(steps, Location(0,0,0))
+		loop(steps, Location(0,0,0), Location(0,0,0))
 	}
 	
-	def process(path: String): Location = {
+	def process(path: String): (Location, Location) = {
 		val steps = path.split(",").map(Direction.fromString).toList
 		walk(steps)
 	}
 	
-	def stepsAway(path: String): Int = {
-		val endingLocation = process(path)
-		endingLocation.distanceFromOrigin
-	}
-	
 	def main(args: Array[String]): Unit = {
-		println("steps = " + stepsAway(readInput))
+		val results = process(readInput)
+		println("steps = " + results._1.distanceFromOrigin)
+		println("furthest = " + results._2.distanceFromOrigin)
 	}
 }
