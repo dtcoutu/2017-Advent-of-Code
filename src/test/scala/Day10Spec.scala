@@ -1,6 +1,10 @@
 import org.scalatest._
 
 class Day10Spec extends FlatSpec with Matchers {
+	"Convert input" should "take input and make it a sequence of ascii codes with appended defaults" in {
+		assert(Day10.convertInput("1,2,3") == List(49,44,50,44,51,17,31,73,47,23))
+	}
+	
 	"Reverse sublist" should "work with basic case" in {
 		val initialKnot = Day10.KnotHash(0, 0, List(0,1,2,3,4))
 		assert(initialKnot.process(3).list == List(2,1,0,3,4))

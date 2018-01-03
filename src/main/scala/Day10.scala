@@ -30,21 +30,27 @@ object Day10 {
 			
 			KnotHash(nextPosition, skipSize + 1, buildReversedList)
 		}
+		
+		val denseHash: List[Int] = list.grouped(16).toList.map(l => l.foldLeft(0)(_ ^ _))
+		def hashString: String = denseHash.map { v =>
+			val hex = v.toHexString
+			if (hex.length < 2) "0" + hex else hex
+		}.mkString("")
 	}
 	
+	@tailrec
+	def processKnot(inputData: List[Int], knotHash: KnotHash): KnotHash = inputData match {
+		case List() => knotHash
+		case head :: tail => {
+			val next = knotHash.process(head)
+			processKnot(tail, next)
+		}
+	}
+
 	def process(numbers: List[Int], input: List[Int]): KnotHash = {
 		val startingKnotHash = KnotHash(0, 0, numbers)
-
-	 @tailrec
-		def loop(inputData: List[Int], knotHash: KnotHash): KnotHash = inputData match {
-			case List() => knotHash
-			case head :: tail => {
-				val next = knotHash.process(head)
-				loop(tail, next)
-			}
-		}
 		
-		loop(input, startingKnotHash)
+		processKnot(input, startingKnotHash)
 	}
 	
 	def firstTwoProduct(numbers: List[Int], input: List[Int]): Int = {
@@ -52,8 +58,28 @@ object Day10 {
 		endingKnot.list(0) * endingKnot.list(1)
 	}
 	
+	def convertInput(input: String): List[Int] = {
+		input.toList.map(_.toInt) ::: List(17,31,73,47,23)
+	}
+	
+	def manyRounds(input: List[Int]): KnotHash = {
+		val startingKnotHash = KnotHash(0, 0, numbers)
+		
+		def loop(remainingRounds: Int, knotHash: KnotHash): KnotHash = 
+			if (remainingRounds == 0) knotHash
+			else loop(remainingRounds-1, processKnot(input, knotHash))
+			
+		loop(64, startingKnotHash)
+	}
+	
+	def secondPart(input: String): String = {
+		val secondKnotHash = manyRounds(convertInput(input))
+		secondKnotHash.hashString
+	}
+	
 	def main(args: Array[String]): Unit = {
 		val input = inputData.split(",").map(_.toInt).toList
 		println("product = " + firstTwoProduct(numbers, input))
+		println("hash string = " + secondPart(inputData))
 	}
 }
