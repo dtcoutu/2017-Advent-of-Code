@@ -38,4 +38,8 @@ class Day12Spec extends FlatSpec with Matchers {
 	it should "avoid infinite loops"  in {
 		assert(Day12.countConnectedToZero(infiniteLoopInput) == 3)
 	}
+	
+	"Count groups" should "count the number of different groups that exist" in {
+		assert(Day12.countGroups(sampleInput) == 2)
+	}
 }

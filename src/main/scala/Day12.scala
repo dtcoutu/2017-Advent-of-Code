@@ -17,36 +17,57 @@ object Day12 {
 	
 	def countConnectedToZero(input: String): Int = {
 		val programs = parseInput(input)
+		val connectedToZero = allProgramIdsConnectedTo(0, programs)
 		
-		def isConnected(programId: Int): Boolean = {
+		connectedToZero.size
+	}
+
+	def allProgramIdsConnectedTo(targetProgramId: Int, programs: Map[Int,List[Int]]): Set[Int] = {
+		def isConnectedTo(targetProgramId: Int, programIdToCheck: Int): Boolean = {
 			@tailrec
 			def checkChildren(programsToCheck: List[Int], checked: List[Int] = List()): Boolean = {
 				programsToCheck match {
 					case List() => false
 					case head :: tail if checked.contains(head) => checkChildren(tail, checked)
-					case head :: tail => if (head == 0) true else checkChildren(programs(head) ::: tail, head :: checked)
+					case head :: tail => if (head == targetProgramId) true else checkChildren(programs(head) ::: tail, head :: checked)
 				}
 			}
 			
-			if (programId == 0) true
-			else checkChildren(programs(programId))
+			if (programIdToCheck == targetProgramId) true
+			else checkChildren(programs(programIdToCheck), List())
 		}
 		
 		@tailrec
-		def loop(remainingProgramKeys: List[Int], confirmedConnectedToZero: Set[Int], count: Int): Int = {
-			remainingProgramKeys match {
-				case List() => count
-				case head :: tail => {
-					if (confirmedConnectedToZero.contains(head) || isConnected(head)) loop(tail, confirmedConnectedToZero + head, count+1)
-					else loop(tail, confirmedConnectedToZero, count)
-				}
+		def loop(remainingProgramKeys: List[Int], connectedPrograms: Set[Int]): Set[Int] = remainingProgramKeys match {
+			case List() => connectedPrograms
+			case head :: tail => {
+				if (connectedPrograms.contains(head) || isConnectedTo(targetProgramId, head)) loop(tail, connectedPrograms + head)
+				else loop(tail, connectedPrograms)
 			}
 		}
 		
-		loop(programs.keySet.toList, Set(), 0)
+		loop(programs.keySet.toList, Set())
+	}
+	
+	def countGroups(input: String): Int = {
+		val programs = parseInput(input)
+		
+		def loop(remainingProgramKeys: List[Int], groups: List[Set[Int]]): List[Set[Int]] = remainingProgramKeys match {
+			case List() => groups
+			case head :: tail => {
+				if (groups.exists(g => g.contains(head))) loop(tail, groups)
+				// This got the job done, but I could have made the list of programs smaller as they were processed...
+				else loop(tail, allProgramIdsConnectedTo(head, programs) :: groups)
+			}
+		}
+		
+		val groups = loop(programs.keySet.toList, List())
+		
+		groups.size
 	}
 	
 	def main(args: Array[String]): Unit = {
 		println("Programs in the group that contains program ID 0: " + countConnectedToZero(readInput))
+		println("Number of groups: " + countGroups(readInput))
 	}
 }
