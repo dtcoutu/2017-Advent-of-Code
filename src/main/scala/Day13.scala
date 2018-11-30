@@ -19,7 +19,7 @@ object Day13 {
 	val scannerRegex = """([0-9]+): ([0-9]+)""".r
 
 	def parseInput(input: String): Seq[Scanner] = {
-		input.split("\\n").map { line =>
+		input.split(scala.util.Properties.lineSeparator).map { line =>
 			line match {
 				case scannerRegex(depth, range) => Scanner(depth.toInt, range.toInt)
 			}
@@ -31,6 +31,7 @@ object Day13 {
 	}
 	
 	def calculateDelayRequired(input: String): Int = {
+		0
 	}
 
 	def main(args: Array[String]): Unit = {
