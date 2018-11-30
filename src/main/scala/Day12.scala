@@ -6,7 +6,7 @@ object Day12 {
 	}
 	
 	def parseInput(input: String): Map[Int, List[Int]] = {
-		input.split("\n").map(parseLine).toMap
+		input.split(scala.util.Properties.lineSeparator).map(parseLine).toMap
 	}
 	
 	def parseLine(input: String): (Int, List[Int]) = {
